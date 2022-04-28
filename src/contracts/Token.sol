@@ -6,7 +6,7 @@ contract NFTToken is ERC721URIStorage{
 
     constructor() ERC721('NFTToken','NFT'){}
     
-    function mint(string memory tokenURI) public returns(uint){
+    function mint(string calldata tokenURI) public returns(uint){
         tokenId++ ;
         _safeMint(msg.sender, tokenId);
         _setTokenURI(tokenId, tokenURI);
