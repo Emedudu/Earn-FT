@@ -5,7 +5,7 @@ import "./Token.sol";
 
 contract MarketPlace{
     // total number of uploaded items
-    uint itemsCount;
+    uint public itemsCount;
     // a mapping of number of items to id of the items
     mapping(uint=>uint) public itemsForSale;
     // a mapping of id of items to the item
@@ -34,7 +34,6 @@ contract MarketPlace{
         require(price>=0,"Enter a valid price");
         // transfer ownership to the marketplace needs the approve function called
         nft.transferFrom(msg.sender,address(this),itemId);
-        require(false,'debugging');
         // increase the item count
         itemsCount++;
         // map the item count to its id
