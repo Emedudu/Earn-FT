@@ -58,7 +58,7 @@ contract('tests',(accounts)=>{
         
         describe('checking uploadNFT function',()=>{
             it('should make sure nft is uploaded',async()=>{
-                const result=await marketplace.uploadNFT(nft.address,1,toWei('1.5'),{from:accounts[1]});
+                const result=await marketplace.uploadNFT(nft.address,1,toWei('1.5'),"Number",{from:accounts[1]});
                 let itemForSale=await marketplace.itemsForSale(1);
                 // let count=await marketplace.itemsCount();
                 // console.log(itemForSale);
@@ -66,6 +66,7 @@ contract('tests',(accounts)=>{
                 let creator=await item.creator;
                 assert.equal(creator,accounts[1]);
                 assert.equal(result.logs[0].args.price,toWei('1.5'));
+                assert.equal(result.logs[0].args.name,"Number")
             })
         })
         describe('checking buyNFT function',()=>{
@@ -79,6 +80,7 @@ contract('tests',(accounts)=>{
                 let balSeller=await web3.eth.getBalance(accounts[1]);
                 assert(balBuyer<(toWei('100')-fee),'fee was not deducted');  
                 let balBank=await web3.eth.getBalance(feeBank);
+                console.log(bankamt,balBank)
                 assert(balBank>bankamt,"fee was not paid to the bank");
                 assert(balSeller>toWei('100'),"seller account should be credited");
                 // assert(balBuyer<toWei('100'),'buyer account should be debited')
@@ -86,6 +88,8 @@ contract('tests',(accounts)=>{
                 let owner=await nft.ownerOf(1);
                 assert.equal(owner,accounts[2])
                 assert(owner!=accounts[1],'nft already transferred')
+                assert.equal(result.logs[0].args.price,toWei('1.5'))
+                assert.equal(result.logs[0].args.name,"Number")
 
             })
         })

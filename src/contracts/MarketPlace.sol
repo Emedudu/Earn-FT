@@ -17,19 +17,22 @@ contract MarketPlace{
     struct Item{
         NFTToken item;
         uint id;
+        string name;
         address payable creator;
         uint price;
         bool sold;
     }
     // event emitted when seller uploads nft to marketplace
-    event Uploaded(address market,uint price,uint itemId);
+    event Uploaded(address market,uint price,uint itemId,string name);
+    // event emitted when buyer nuys nft from marketplace
+    event Bought(address seller,uint price,uint itemId,string name);
     // deployer gives the fees address and the percentage of fee per item
     constructor(uint feePercent){
         feeBank=payable(msg.sender);
         percentage=feePercent;
     }
     // seller uploads nft to marketplace (accepts as arguments NFT instance,tokenId, and price)
-    function uploadNFT(NFTToken nft,uint itemId,uint price) public{
+    function uploadNFT(NFTToken nft,uint itemId,uint price,string memory name) public{
         // price of an item cannot be negative
         require(price>=0,"Enter a valid price");
         // transfer ownership to the marketplace needs the approve function called
@@ -42,12 +45,13 @@ contract MarketPlace{
         itemId_Item[itemId]=Item({
             item:nft,
             id:itemId,
+            name:name,
             creator:payable(msg.sender),
             price:price,
             sold:false
         });
         // emit the uploaded event
-        emit Uploaded(address(this),price,itemId);
+        emit Uploaded(address(this),price,itemId,name);
     }
     // buyer buys nft
     function buyNFT(uint itemNumber)public payable{
@@ -69,6 +73,8 @@ contract MarketPlace{
         item.sold=true;
         // finally transfer the nft from the marketplace to the buyer
         item.item.transferFrom(address(this),msg.sender,item.id);
+        // event emitted when buyer buys nft
+        emit Bought(item.creator,item.price,item.id,item.name);
 
     }
     // calculate the total fee for buyer
