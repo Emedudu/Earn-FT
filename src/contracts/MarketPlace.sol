@@ -60,7 +60,7 @@ contract MarketPlace{
         // item should not have been sold
         require (!(item.sold),'This item is not available for sale');
         // buyer must have enough ether to cover both price and market fee
-        require (msg.value>totalPrice,'You do not have enough ether to purchase this item');
+        require (msg.value>=totalPrice,'You do not have enough ether to purchase this item');
         // transfer price to creator of the nft
         item.creator.transfer(item.price);
         // transfer market fee
@@ -72,8 +72,9 @@ contract MarketPlace{
 
     }
     // calculate the total fee for buyer
-    function calc_totalFee(uint itemNumber) public returns(uint){
+    function calc_totalFee(uint itemNumber) public view returns(uint){
         uint amount=itemId_Item[itemsForSale[itemNumber]].price;
-        return (amount+(amount*percentage/100));
+        uint ans=(amount+(amount*percentage/100));
+        return ans;
     }
 }

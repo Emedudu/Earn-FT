@@ -63,8 +63,28 @@ contract('tests',(accounts)=>{
                 let item=await marketplace.itemId_Item(itemForSale);
                 let creator=await item.creator;
                 assert.equal(creator,accounts[1]);
+                assert.equal(result.logs[0].args.price,toWei('1.5'));
             })
-            
+        })
+        describe('checking buyNFT function',()=>{
+            // before(async()=>{
+            //     await marketplace.uploadNFT(nft.address,1,toWei('1.5'),{from:accounts[1]})
+            // })
+            it('should make sure purchase is successful',async()=>{
+                let fee=await marketplace.calc_totalFee(1);
+                const result=await marketplace.buyNFT(1,{from:accounts[2],value:fee});
+                let bal=await web3.eth.getBalance(accounts[2]);
+                
+                assert(bal<(toWei('100')-fee),'fee was not deducted');  
+                let feeBank=await marketplace.feeBank();
+                let balBank=await web3.eth.getBalance(feeBank);
+                assert(balBank>toWei('100'),"fee was not paid to the bank");
+                console.log(fee.toString(),bal);
+                let owner=await nft.ownerOf(1);
+                assert.equal(owner,accounts[2])
+                assert(owner!=accounts[1],'nft already transferred')
+
+            })
         })
     })
 })
