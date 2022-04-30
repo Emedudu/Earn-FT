@@ -36,11 +36,13 @@ contract('tests',(accounts)=>{
         })
     })
     describe('MarketPlace',()=>{
-        let marketplace,marketAddress
+        let marketplace,marketAddress,feeBank,bankamt
         beforeEach(async()=>{
             marketplace=await MarketPlace.deployed();
             marketAddress=await marketplace.address;
             nft.setApprovalForAll(marketAddress,true,{from:accounts[1]})
+            feeBank=await marketplace.feeBank();
+            bankamt=await web3.eth.getBalance(feeBank)
         })
         
         describe('check constructor variables',()=>{
@@ -48,9 +50,9 @@ contract('tests',(accounts)=>{
                 // 0x28271624D07061f0bf6B477dAf00233805549e3f
                 let feebank=await marketplace.feeBank()
                 let percentage= await marketplace.percentage()
-                console.log(feebank,accounts[0])
-                assert.equal(feebank,accounts[0])
-                assert.equal(percentage,1)
+                // console.log(feebank,accounts[0])
+                assert.equal(feebank,accounts[3])
+                assert.equal(percentage,10)
             })
         })
         
@@ -73,13 +75,14 @@ contract('tests',(accounts)=>{
             it('should make sure purchase is successful',async()=>{
                 let fee=await marketplace.calc_totalFee(1);
                 const result=await marketplace.buyNFT(1,{from:accounts[2],value:fee});
-                let bal=await web3.eth.getBalance(accounts[2]);
-                
-                assert(bal<(toWei('100')-fee),'fee was not deducted');  
-                let feeBank=await marketplace.feeBank();
+                let balBuyer=await web3.eth.getBalance(accounts[2]);
+                let balSeller=await web3.eth.getBalance(accounts[1]);
+                assert(balBuyer<(toWei('100')-fee),'fee was not deducted');  
                 let balBank=await web3.eth.getBalance(feeBank);
-                assert(balBank>toWei('100'),"fee was not paid to the bank");
-                console.log(fee.toString(),bal);
+                assert(balBank>bankamt,"fee was not paid to the bank");
+                assert(balSeller>toWei('100'),"seller account should be credited");
+                // assert(balBuyer<toWei('100'),'buyer account should be debited')
+                console.log(balBank,balSeller,balBuyer);
                 let owner=await nft.ownerOf(1);
                 assert.equal(owner,accounts[2])
                 assert(owner!=accounts[1],'nft already transferred')
