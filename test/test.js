@@ -93,5 +93,11 @@ contract('tests',(accounts)=>{
 
             })
         })
+        describe ('checking getItem function',()=>{
+            it('should return required array',async()=>{
+                let arr=await marketplace.getItem(1)
+                console.log(arr)
+            })
+        })
     })
 })

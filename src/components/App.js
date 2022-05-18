@@ -13,6 +13,8 @@ const App=()=> {
   const [contracts,setContracts]=useState('')
   const [token,setToken]=useState('')
   const [accounts,setAccounts]=useState('')
+  const [itemsCount,setItemsCount]=useState(0)
+  const [allItems,setAllItems]=useState([])
   const loadBlockChainData=async()=>{
     if(typeof window.ethereum!=='undefined'){
       const web3 = await new Web3(new Web3.providers.WebsocketProvider('ws://localhost:7545'))
@@ -45,31 +47,27 @@ const App=()=> {
       window.alert('Please Install Metamask')
     }
   }
-  let loadItem=new Promise((resolve,reject)=>{
-    contracts.methods.itemsCount().call((err,result)=>{
-      if (!err){
-        let res=parseInt(result)
-        if (!isNaN(res)){
-          resolve(res)
-        }
-      }
-    })
-
-  })
-  // const loadItems=async()=>{
-  //   let res=contracts && await contracts.methods.itemsCount().call()
-  //   console.log(parseInt(res))
-  // }
+  const getItemsCount=async()=>{
+    let res=contracts && await contracts.methods.itemsCount().call()
+    setItemsCount(parseInt(res))
+    console.log('a')
+  }
+  const getAllItems=(count)=>{
+    for (let i=1;i<=count;i++){
+      let item=contracts.methods.getItem(i).call();
+      setAllItems([...allItems,item])
+    }
+  }
   useEffect(()=>{
     loadBlockChainData()
   },[])
-  contracts&&loadItem.then((res)=>console.log(res))
+  contracts&&getItemsCount().then(()=>getAllItems(itemsCount))
   // loadItems()
   return (
     <div className='container row full-height d-flex flex-column'>
       <nav className='navbar row '>
         <Link to="/" type="button" className={`btn col-4 font-weight-bold`}>HOME</Link>
-        <Link to="/uploadNFT" type="button" className={`btn col-4 font-weight-bold`}>UPLOADED NFTs</Link>
+        <Link to="/uploadNFT" type="button" className={`btn col-4 font-weight-bold`}>UPLOAD NFTs</Link>
         <Link to="/boughtNFT" type="button" className={`btn col-4 font-weight-bold`}>BOUGHT NFTs</Link>
       </nav>
       <Routes>

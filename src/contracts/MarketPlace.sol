@@ -1,7 +1,8 @@
 pragma solidity ^0.8.0;
 // import dependencies
-// import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "./Token.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+// import "./Token.sol";
 
 contract MarketPlace{
     // total number of uploaded items
@@ -15,7 +16,7 @@ contract MarketPlace{
     uint public percentage;
     // description of an nft item on the marketplace
     struct Item{
-        NFTToken item;
+        IERC721 item;
         uint id;
         string name;
         address payable creator;
@@ -32,7 +33,7 @@ contract MarketPlace{
         percentage=feePercent;
     }
     // seller uploads nft to marketplace (accepts as arguments NFT instance,tokenId, and price)
-    function uploadNFT(NFTToken nft,uint itemId,uint price,string memory name) public{
+    function uploadNFT(IERC721 nft,uint itemId,uint price,string memory name) public{
         // price of an item cannot be negative
         require(price>=0,"Enter a valid price");
         // transfer ownership to the marketplace needs the approve function called
@@ -82,5 +83,10 @@ contract MarketPlace{
         uint amount=itemId_Item[itemsForSale[itemNumber]].price;
         uint ans=(amount+(amount*percentage/100));
         return ans;
+    }
+    function getItem(uint marketId)public view returns(string[3] memory){
+        Item memory itm=itemId_Item[itemsForSale[marketId]];
+        string[3] memory result=[Strings.toString(itm.id),itm.name,Strings.toString(itm.price)];
+        return result;
     }
 }
