@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import Web3 from 'web3';
-import MarketPlace from '../abis/MarketPlace.json';
-import NFTToken from '../abis/NFTToken.json';
+import MarketPlace from '../abis/MarketPlace'
+import NFTToken from '../abis/NFTToken'
 import './App.css';
 import BoughtNFT from './BoughtNFT';
 import Home from './Home';
@@ -17,7 +17,7 @@ const App=()=> {
     if(typeof window.ethereum!=='undefined'){
       const web3 = await new Web3(new Web3.providers.WebsocketProvider('ws://localhost:7545'))
       // const url = `wss://rinkeby.infura.io/ws/v3/5a5069b4ad6f4c38afe55f29fe40b91e`;
-// Using WebSockets
+      // Using WebSockets
       // const web3 = createAlchemyWeb3(url);
       // Using web3js
       // const web3 = new Web3(new Web3.providers.WebsocketProvider(url));
@@ -38,15 +38,33 @@ const App=()=> {
         setContracts(contract)
         setToken(token)
       }catch(err){
+        // console.log(err)
         window.alert("Unable to load Contracts")
       }
     }else{
       window.alert('Please Install Metamask')
     }
   }
+  let loadItem=new Promise((resolve,reject)=>{
+    contracts.methods.itemsCount().call((err,result)=>{
+      if (!err){
+        let res=parseInt(result)
+        if (!isNaN(res)){
+          resolve(res)
+        }
+      }
+    })
+
+  })
+  // const loadItems=async()=>{
+  //   let res=contracts && await contracts.methods.itemsCount().call()
+  //   console.log(parseInt(res))
+  // }
   useEffect(()=>{
     loadBlockChainData()
   },[])
+  contracts&&loadItem.then((res)=>console.log(res))
+  // loadItems()
   return (
     <div className='container row full-height d-flex flex-column'>
       <nav className='navbar row '>
