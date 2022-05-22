@@ -23,12 +23,11 @@ const UploadNFT=({contracts,account,Token,loading,setLoading})=>{
         // contracts&&contracts.methods.uploadNFT(Token.address,NFTId,price,nam,file).send({from:account})
     }
     const mint=async(res)=>{
-        let uri=`https://ipfs.infura.io/ipfs/${res}`
+        let uri=`https://ipfs.infura.io/ipfs/${res.path}`
         await Token&&Token.methods.mint(uri).send({from:account, gas:5000000})
         let tokenId=await await(Token&&Token.methods.tokenId().call())
-        // await (await Token&&Token.methods.setApprovalForAll(contracts.address,true).send({from:account, gas:5000000}))
-        
-        await (await contracts&&contracts.methods.uploadNFT(Token.address,parseInt(tokenId.toString()),Web3.utils.toWei(price.toString())))
+        Token&&Token.methods.setApprovalForAll(contracts.address,true).send({from:account, gas:5000000}).then(()=>console.log('done'))
+        contracts&&contracts.methods.uploadNFT(Token.address,parseInt(tokenId.toString()),price).send({from:account, gas:5000000})
         console.log(parseInt(tokenId.toString()))
     }
     

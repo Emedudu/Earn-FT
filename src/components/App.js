@@ -57,8 +57,11 @@ const App=()=> {
         <Link to="/uploadNFT" type="button" className={`btn col-4 font-weight-bold`}>UPLOAD NFTs</Link>
         <Link to="/boughtNFT" type="button" className={`btn col-4 font-weight-bold`}>BOUGHT NFTs</Link>
       </nav>
+      {/* <div style={{"visibility":`${loading&&"hidden"}`}}>
+        Loading...
+      </div> */}
       <Routes>
-        <Route exact path="/" element={<Home contracts={contracts} account={accounts[1]} loading={loading} setLoading={setLoading}/>}/>
+        <Route exact path="/" element={<Home contracts={contracts} account={accounts[1]} Token={token} loading={loading} setLoading={setLoading}/>}/>
         <Route exact path="/uploadNFT" element={<UploadNFT contracts={contracts} account={accounts[1]} Token={token} loading={loading} setLoading={setLoading}/>}/>
         <Route exact path="/boughtNFT" element={<BoughtNFT contracts={contracts} account={accounts[1]} loading={loading} setLoading={setLoading}/>}/>
       </Routes>

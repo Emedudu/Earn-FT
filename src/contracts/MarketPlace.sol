@@ -47,6 +47,7 @@ contract MarketPlace{
             price:price,
             sold:false
         });
+
         // emit the uploaded event
         emit Uploaded(address(this),price,itemId);
     }
