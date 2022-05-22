@@ -13,8 +13,7 @@ const App=()=> {
   const [contracts,setContracts]=useState('')
   const [token,setToken]=useState('')
   const [accounts,setAccounts]=useState('')
-  const [itemsCount,setItemsCount]=useState(0)
-  const [allItems,setAllItems]=useState([])
+  const [loading,setLoading]=useState(true)
   const loadBlockChainData=async()=>{
     if(typeof window.ethereum!=='undefined'){
       const web3 = await new Web3(new Web3.providers.WebsocketProvider('ws://localhost:7545'))
@@ -47,21 +46,9 @@ const App=()=> {
       window.alert('Please Install Metamask')
     }
   }
-  const getItemsCount=async()=>{
-    let res=contracts && await contracts.methods.itemsCount().call()
-    setItemsCount(parseInt(res))
-    console.log('a')
-  }
-  const getAllItems=(count)=>{
-    for (let i=1;i<=count;i++){
-      let item=contracts.methods.getItem(i).call();
-      setAllItems([...allItems,item])
-    }
-  }
   useEffect(()=>{
-    loadBlockChainData()
+    loadBlockChainData().then(()=>setLoading(false))
   },[])
-  contracts&&getItemsCount().then(()=>getAllItems(itemsCount))
   // loadItems()
   return (
     <div className='container row full-height d-flex flex-column'>
@@ -71,10 +58,11 @@ const App=()=> {
         <Link to="/boughtNFT" type="button" className={`btn col-4 font-weight-bold`}>BOUGHT NFTs</Link>
       </nav>
       <Routes>
-        <Route exact path="/" element={<Home contracts={contracts} account={accounts[0]}/>}/>
-        <Route exact path="/uploadNFT" element={<UploadNFT contracts={contracts} account={accounts[0]}/>}/>
-        <Route exact path="/boughtNFT" element={<BoughtNFT contracts={contracts} account={accounts[0]}/>}/>
+        <Route exact path="/" element={<Home contracts={contracts} account={accounts[1]} loading={loading} setLoading={setLoading}/>}/>
+        <Route exact path="/uploadNFT" element={<UploadNFT contracts={contracts} account={accounts[1]} Token={token} loading={loading} setLoading={setLoading}/>}/>
+        <Route exact path="/boughtNFT" element={<BoughtNFT contracts={contracts} account={accounts[1]} loading={loading} setLoading={setLoading}/>}/>
       </Routes>
+      
     </div>    
   );
   
