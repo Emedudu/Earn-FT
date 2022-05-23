@@ -1,7 +1,11 @@
 import React from "react";
+import Web3 from "web3";
 
-const Card=({marketId,name,creator,description,price,image})=>{
-
+const Card=({marketId,name,creator,description,price,image,contracts,account})=>{
+    let web3=new Web3()
+    const buyNFT=()=>{
+        contracts.methods.buyNFT(marketId).send({from:account,value:price})
+    }
     return(
         <div className="card col-8 col-sm-6 col-lg-4">
             <img className="card-img-top" src={image} alt="Card image cap"/>
@@ -19,8 +23,9 @@ const Card=({marketId,name,creator,description,price,image})=>{
                     Id: {marketId}
                 </p>
                 <p className="card-text font-weight-light">
-                    Price: {price}
+                    Price: {web3.utils.fromWei(price.toString())}
                 </p>
+                <button onClick={buyNFT}>BUY</button>
             </div>
         </div>
     )

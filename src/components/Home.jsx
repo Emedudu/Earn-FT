@@ -11,16 +11,17 @@ const Home=({contracts,Token,account})=>{
         for (let i=1;i<=count;i++){
             let item=await contracts.methods.itemsForSale(i).call();
             if (!item.sold){
+                let price=await contracts.methods.calc_totalFee(i).call()
                 let uri=Token && await Token.methods.tokenURI(item.id).call();
                 let response=await fetch(uri)
                 let metadata=await response.json()
-                console.log(metadata)
+                console.log(price)
                 itemsFetched.push({
                     marketId:i,
                     creator:item.creator,
                     name:metadata.nam,
                     description:metadata.description,
-                    price:parseInt(item.price.toString()),
+                    price:price,
                     image:metadata.imageUri
                 })
             }
@@ -41,7 +42,9 @@ const Home=({contracts,Token,account})=>{
                         creator={obj.creator}
                         description={obj.description}
                         price={obj.price}
-                        image={obj.image}/>
+                        image={obj.image}
+                        contract={contracts}
+                        account={account}/>
                         })
                     }
             </div>

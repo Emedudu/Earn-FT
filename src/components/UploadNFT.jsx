@@ -4,6 +4,7 @@ import {create as ipfsHttpClient} from 'ipfs-http-client'
 const client=ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
 const UploadNFT=({contracts,account,Token,loading,setLoading})=>{
+    const web3=new Web3()
     const [imageUri, setImageUri]=useState('')
     const [description, setDescription]=useState('')
     const [price,setPrice]=useState(0)
@@ -24,11 +25,14 @@ const UploadNFT=({contracts,account,Token,loading,setLoading})=>{
     }
     const mint=async(res)=>{
         let uri=`https://ipfs.infura.io/ipfs/${res.path}`
-        await Token&&Token.methods.mint(uri).send({from:account, gas:5000000})
+        Token&&Token.methods.mint(uri).send({from:account, gas:5000000})
         let tokenId=await await(Token&&Token.methods.tokenId().call())
+            
+        
         Token&&Token.methods.setApprovalForAll(contracts.address,true).send({from:account, gas:5000000}).then(()=>console.log('done'))
-        contracts&&contracts.methods.uploadNFT(Token.address,parseInt(tokenId.toString()),price).send({from:account, gas:5000000})
-        console.log(parseInt(tokenId.toString()))
+        contracts&&contracts.methods.uploadNFT(Token.address,parseInt(tokenId.toString())+1,web3.utils.toWei(price)).send({from:account, gas:5000000})
+        // console.log(parseInt(tokenId.toString()))
+        
     }
     
        // contracts&&contracts.methods.uploadNFT(Token.address,tokenId,price).send({from:accoun}
