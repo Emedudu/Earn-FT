@@ -23,13 +23,18 @@ contract MarketPlace{
         bool sold;
     }
     // event emitted when seller uploads nft to marketplace
-    event Uploaded(address market,uint price,uint itemId);
+    event Uploaded(address market,uint price,uint itemId,address indexed adress);
     // event emitted when buyer nuys nft from marketplace
-    event Bought(address seller,uint price,uint itemId);
+    event Bought(address seller,uint price,uint itemId,address indexed adress);
     // deployer gives the fees address and the percentage of fee per item
     constructor(uint feePercent){
         feeBank=payable(msg.sender);
         percentage=feePercent;
+    }
+    // modifier for only owner of NFT
+    modifier onlyOwner(uint itemNumber) {
+      require(msg.sender == itemsForSale[itemNumber].creator,'Only owner can do this');
+      _;
     }
     // seller uploads nft to marketplace (accepts as arguments NFT instance,tokenId, and price)
     function uploadNFT(IERC721 nft,uint itemId,uint price) public{
@@ -49,7 +54,7 @@ contract MarketPlace{
         });
 
         // emit the uploaded event
-        emit Uploaded(address(this),price,itemId);
+        emit Uploaded(address(this),price,itemId,msg.sender);
     }
     // buyer buys nft
     function buyNFT(uint itemNumber)public payable{
@@ -72,8 +77,12 @@ contract MarketPlace{
         // finally transfer the nft from the marketplace to the buyer
         item.item.transferFrom(address(this),msg.sender,item.id);
         // event emitted when buyer buys nft
-        emit Bought(item.creator,item.price,item.id);
-
+        emit Bought(item.creator,item.price,item.id,msg.sender);
+    }
+    function removeNFT(uint itemNumber)public onlyOwner(itemNumber){
+        Item storage itm=itemsForSale[itemNumber];
+        itm.item.transferFrom(address(this),msg.sender,itm.id);
+        itm.sold=true;
     }
     // calculate the total fee for buyer
     function calc_totalFee(uint itemNumber) public view returns(uint){
