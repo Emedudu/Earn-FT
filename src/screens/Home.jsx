@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Card from './Card';
+import React, { useEffect } from 'react';
+import Card from '../components/Card';
 
 const Home=({contracts,
             Token,
@@ -11,9 +11,7 @@ const Home=({contracts,
             allItems,
             setAllItems,
             marketChanged,
-            setMarketChanged
-        })=>{          
-    
+            setMarketChanged})=>{            
     const getAllItems=async()=>{
         setLoading(true)
         let res=contracts && await contracts.methods.itemsCount().call()
@@ -42,23 +40,29 @@ const Home=({contracts,
         setLoading(false)
     }
     const buyNFT=async(marketId,price)=>{
+        setLoading(true)
         await (await contracts&&contracts.methods.buyNFT(marketId).send({from:account,value:price,gas:5000000}))
-        window.localStorage.setItem('hasPurchasedNFTs',true)
-        getAllItems()
     }
     const removeNFT=async(marketId)=>{
+        setLoading(true)
         await (await contracts&&contracts.methods.removeNFT(marketId).send({from:account,gas:5000000}))
-        getAllItems()
     }
     contracts&&contracts.events.Bought({filter:{adress:account}})
     .on('data',event=>{
-        setMessage(`You just bought ${event.returnValues}`)
+        setLoading(false)
+        setMessage(`You just bought ${event.returnValues.itemId}`)
+        getAllItems()
+    })
+    contracts&&contracts.events.Removed({filter:{adress:account}})
+    .on('data',event=>{
+        setLoading(false)
+        setMessage(`You just removed ${event.returnValues.itemId}`)
         getAllItems()
     })
     useEffect(()=>{
         if(contracts!==''){
             if (homeInitialRender) {
-                getAllItems() // initially called every time, the component renders
+                getAllItems()
                 setHomeInitialRender(false);
             } 
         }
@@ -66,24 +70,32 @@ const Home=({contracts,
     marketChanged&&getAllItems().then(()=>setMarketChanged(false))
     return(
         <div>
-            <div className='row justify-content-center'>
-                {allItems.map((obj,i)=>{
-                        return <Card
-                        key={i} 
-                        marketId={obj.marketId}
-                        name={obj.name}
-                        creator={obj.creator}
-                        description={obj.description}
-                        price={obj.price}
-                        image={obj.image}
-                        isOwner={obj.isOwner}
-                        contract={contracts}
-                        account={account}
-                        buyNFT={buyNFT}
-                        removeNFT={removeNFT}/>
-                        })
-                    }
-            </div>
+            {allItems.length?(
+                <div className='row d-flex justify-content-center'>
+                    {allItems.map((obj,i)=>{
+                            return <Card
+                            key={i} 
+                            marketId={obj.marketId}
+                            name={obj.name}
+                            creator={obj.creator}
+                            description={obj.description}
+                            price={obj.price}
+                            image={obj.image}
+                            isOwner={obj.isOwner}
+                            contract={contracts}
+                            account={account}
+                            buyNFT={buyNFT}
+                            removeNFT={removeNFT}/>
+                            })
+                        }
+                </div>
+            ):(
+                <div className='d-flex align-items-center justify-content-center' style={{'height':'100vh'}}>
+                    <h4>There are no items here</h4>
+                </div>
+            )
+
+            }
         </div>
     )
 }

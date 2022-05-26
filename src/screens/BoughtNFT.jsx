@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import BoughtCard from './BoughtCard';
+import React, { useEffect} from 'react';
+import BoughtCard from '../components/BoughtCard';
 
 const BoughtNFT=({contracts,
                 account,
@@ -9,8 +9,7 @@ const BoughtNFT=({contracts,
                 marketChanged,
                 boughtInitialRender,
                 setBoughtInitialRender,
-                setLoading})=>{
-    
+                setLoading})=>{    
     const getBoughtNFTs=()=>{
         setLoading(true)
         contracts&&contracts.getPastEvents('Bought',{
@@ -40,7 +39,7 @@ const BoughtNFT=({contracts,
     useEffect(()=>{
         if(contracts!==''){
             if (boughtInitialRender) {
-                getBoughtNFTs() // initially called every time, the component renders
+                getBoughtNFTs()
                 setBoughtInitialRender(false);
             } 
         }
@@ -48,18 +47,25 @@ const BoughtNFT=({contracts,
     contracts&&marketChanged&&getBoughtNFTs()
     return(
         <div>
-            <div className='row justify-content-center'>
-                {purchases.map((obj,i)=>{
-                        return <BoughtCard
-                        key={i} 
-                        price={obj.totalPrice}
-                        name={obj.name}           
-                        description={obj.description}
-                        image={obj.image}
-                        />
-                        })
-                    }
-            </div>
+            {purchases.length?(
+                <div className='d-flex row justify-content-center'>
+                    {purchases.map((obj,i)=>{
+                            return <BoughtCard
+                            key={i} 
+                            price={obj.totalPrice}
+                            name={obj.name}           
+                            description={obj.description}
+                            image={obj.image}
+                            />
+                            })
+                        }
+                </div>
+            ):(
+                <div className='d-flex align-items-center justify-content-center' style={{'height':'100vh'}}>
+                    <h4>No items purchased</h4>
+                </div>
+            )
+            }
         </div>
     )
 }

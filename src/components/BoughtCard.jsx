@@ -1,7 +1,10 @@
 import React from "react";
 import Web3 from "web3";
 
-const BoughtCard=({price,name,description,image})=>{
+const BoughtCard=({price,
+                name,
+                description,
+                image})=>{
     let web3=new Web3()
     return(
         <div className="p-3 col-10 col-sm-6 col-lg-4">

@@ -26,6 +26,8 @@ contract MarketPlace{
     event Uploaded(address market,uint price,uint itemId,address indexed adress);
     // event emitted when buyer nuys nft from marketplace
     event Bought(address seller,uint price,uint itemId,address indexed adress);
+    // event emitted when owner removes nft from marketplace
+    event Removed(uint itemId,address indexed adress);
     // deployer gives the fees address and the percentage of fee per item
     constructor(uint feePercent){
         feeBank=payable(msg.sender);
@@ -83,6 +85,7 @@ contract MarketPlace{
         Item storage itm=itemsForSale[itemNumber];
         itm.item.transferFrom(address(this),msg.sender,itm.id);
         itm.sold=true;
+        emit Removed(itm.id,msg.sender);
     }
     // calculate the total fee for buyer
     function calc_totalFee(uint itemNumber) public view returns(uint){

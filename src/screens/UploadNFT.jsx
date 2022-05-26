@@ -1,9 +1,15 @@
 import React, { useState } from 'react';
 import Web3 from 'web3';
 import {create as ipfsHttpClient} from 'ipfs-http-client'
+
 const client=ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
 
-const UploadNFT=({contracts,account,Token,setMessage,setLoading,setMarketChanged})=>{
+const UploadNFT=({contracts,
+                account,
+                Token,
+                setMessage,
+                setLoading,
+                setMarketChanged})=>{
     const web3=new Web3()
     const [imageUri, setImageUri]=useState('')
     const [description, setDescription]=useState('')
@@ -24,20 +30,14 @@ const UploadNFT=({contracts,account,Token,setMessage,setLoading,setMarketChanged
         window.localStorage.setItem('hasListedNFTs',true)
         setLoading(false)
         setMarketChanged(true)
-        // let itmId=Token&&Token.mint(uri)
-        // contracts&&contracts.methods.uploadNFT(Token.address,NFTId,price,nam,file).send({from:account})
     }
     const mint=async(res)=>{
         let uri=`https://ipfs.infura.io/ipfs/${res.path}`
         Token&&Token.methods.mint(uri).send({from:account, gas:5000000})
         let tokenId=await await(Token&&Token.methods.tokenId().call())       
         Token&&Token.methods.setApprovalForAll(contracts.address,true).send({from:account, gas:5000000}).then(()=>console.log('done'))
-        contracts&&contracts.methods.uploadNFT(Token.address,parseInt(tokenId.toString())+1,web3.utils.toWei(price)).send({from:account, gas:5000000})
-        // console.log(parseInt(tokenId.toString()))
-        
+        contracts&&contracts.methods.uploadNFT(Token.address,parseInt(tokenId.toString())+1,web3.utils.toWei(price)).send({from:account, gas:5000000})      
     }
-    
-       // contracts&&contracts.methods.uploadNFT(Token.address,tokenId,price).send({from:accoun}
     const uploadToIPFS=async(e)=>{
         e.preventDefault();
         setLoading(true)
@@ -54,37 +54,37 @@ const UploadNFT=({contracts,account,Token,setMessage,setLoading,setMarketChanged
     }
     contracts&&contracts.events.Uploaded({filter:{adress:account}})
         .on('data',event=>{console.log(event.returnValues);setMessage(`You just uploaded ${nam} for a price of ${web3.utils.fromWei(event.returnValues.price.toString())} ETH`)})
-    return(
-        
-        <div className='container w-60 d-flex flex-column justify-content-between align-items-center' style={{'marginTop':'50px','height':'400px'}}>
-            <input 
-            onChange={(e)=>uploadToIPFS(e)}
-            type='file'
-            placeholder='Choose Image'
-            className="form-control"
-            accept="image/png, image/jpeg"
-            />
-            <input
-            onChange={(e)=>setName(e.target.value)}
-            placeholder='Enter NFT name'
-            className='form-control'
-            />
-            <textarea
-            onBlur={(e)=>setDescription(e.target.value)}
-            rows='3'
-            placeholder='Enter description of NFT'
-            className='form-control'
-            />
-            <input
-            onChange={(e)=>setPrice(e.target.value)}
-            type='number'
-            step='0.01'
-            placeholder='Enter price of NFT'
-            className='form-control'
-            />
-            <button onClick={submitFile} type='button' className='btn btn-primary'>UPLOAD</button>
-        </div>
-
+    return( 
+        <div style={{'height':'100vh'}}>
+            <div className='container w-60 d-flex flex-column justify-content-around align-items-center' style={{'height':'500px'}}>
+                <input 
+                onChange={(e)=>uploadToIPFS(e)}
+                type='file'
+                placeholder='Choose Image'
+                className="form-control"
+                accept="image/png, image/jpeg"
+                />
+                <input
+                onChange={(e)=>setName(e.target.value)}
+                placeholder='Enter name of NFT'
+                className='form-control'
+                />
+                <textarea
+                onBlur={(e)=>setDescription(e.target.value)}
+                rows='4'
+                placeholder='Enter description of NFT'
+                className='form-control'
+                />
+                <input
+                onChange={(e)=>setPrice(e.target.value)}
+                type='number'
+                step='0.01'
+                placeholder='Enter price of NFT in ETH'
+                className='form-control'
+                />
+                <button onClick={submitFile} type='button' className='btn btn-primary'>UPLOAD</button>
+            </div>
+        </div>      
     )
 }
 export default UploadNFT;

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Web3 from 'web3';
 import MarketPlace from '../abis/MarketPlace'
 import NFTToken from '../abis/NFTToken'
 import './App.css';
-import BoughtNFT from './BoughtNFT';
-import Home from './Home';
-import MyListedNFTs from './MyListedNFTs';
+import BoughtNFT from '../screens/BoughtNFT';
+import Home from '../screens/Home';
+import MyListedNFTs from '../screens/MyListedNFTs';
 import Navigation from './Navbar';
-import UploadNFT from './UploadNFT';
+import UploadNFT from '../screens/UploadNFT';
 // import {createAlchemyWeb3} from "@alch/alchemy-web3";
 
 const App=()=> {
@@ -39,12 +38,9 @@ const App=()=> {
       await window.ethereum.enable();
       const netId=await web3.eth.net.getId();
       const accounts=await web3.eth.getAccounts();
-      console.log(accounts)
       if(typeof accounts[0] !=='undefined'){
         setAccounts(accounts);
         window.localStorage.setItem('connect', true);
-        // console.log(accounts);
-        // console.log(netId);
       }else{
         window.alert('Please login with metamask')
       }
@@ -54,7 +50,6 @@ const App=()=> {
         setContracts(contract)
         setToken(token)
       }catch(err){
-        // console.log(err)
         window.alert("Unable to load Contracts")
       }
     }else{
@@ -69,10 +64,10 @@ const App=()=> {
     }
   },[])
   return (
-    <div className={`container-fluid m-0 p-0 full-width d-flex flex-column ${loading&&'overflow-hidden'}`}>
+    <div className={`container-fluid m-0 p-0 full-width d-flex flex-column ${loading&&'overflow-hidden'}`} style={{'backgroundImage': 'linear-gradient(to right,rgba(255,255,255,0.2),rgba(0,0,100,0.2))'}}>
       <Navigation walletConnect={loadBlockChainData} account={accounts[0]}/>
       <div className='container-fluid'>
-        <div className={`container d-flex position-fixed justify-content-between p-3 mb-2 bg-info text-white ${message!==''?'visible':'invisible'}`} style={{'zIndex':'999','width':'100%'}}>
+        <div className={`container-fluid full-width d-flex position-fixed justify-content-between p-3 mb-2 bg-info text-white ${message!==''?'visible':'invisible'}`} style={{'zIndex':'999','backgroundImage':'linear-gradient(to right,rgba(0,0,200,0.5),rgba(255,255,255,0.2))'}}>
           {message}
           <button type="button" className="close" aria-label="Close" onClick={()=>setMessage('')}>
             <span aria-hidden="true">&times;</span>
@@ -126,12 +121,9 @@ const App=()=> {
                                           setSoldItems={setSoldItems}
                                           marketChanged={marketChanged} 
                                           setMarketChanged={setMarketChanged}/>}/>
-        </Routes>
-        
+        </Routes>      
       </div>
     </div>  
   );
-  
 }
-
 export default App;

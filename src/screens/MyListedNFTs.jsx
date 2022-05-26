@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Card from './Card';
-import ListedCard from './ListedCard';
-import SoldCard from './SoldCard';
+import React, { useEffect } from 'react';
+import ListedCard from '../components/ListedCard';
+import SoldCard from '../components/SoldCard';
 
 const MyListedNFTs=({contracts,
                     Token,
@@ -14,9 +13,7 @@ const MyListedNFTs=({contracts,
                     soldItems,
                     setSoldItems,
                     marketChanged,
-                    setMarketChanged
-        })=>{
-    
+                    setMarketChanged})=>{    
     const getAllListedItems=async()=>{
         setLoading(true)
         let res=contracts && await contracts.methods.itemsCount().call()
@@ -58,7 +55,9 @@ const MyListedNFTs=({contracts,
         setSoldItems(fetchedSoldItems)     
     }
     const removeNFT=async(marketId)=>{
+        setLoading(true)
         await (await contracts&&contracts.methods.removeNFT(marketId).send({from:account,gas:5000000}))
+        setLoading(false)
         getAllListedItems()
     }
     useEffect(()=>{
@@ -73,32 +72,46 @@ const MyListedNFTs=({contracts,
     return(
         <div>
             <h2>Listed NFTs</h2>
-            <div className='row justify-content-center overflow-auto' style={{'height':'50vh'}}>
-                {listedItems.map((obj,i)=>{
-                        return <ListedCard
-                        key={i} 
-                        marketId={obj.marketId}
+            {listedItems.length?(
+                <div className='d-flex row justify-content-center overflow-auto' style={{'height':'50vh'}}>
+                    {listedItems.map((obj,i)=>{
+                            return <ListedCard
+                            key={i} 
+                            marketId={obj.marketId}
+                            name={obj.name}
+                            creator={obj.creator}
+                            description={obj.description}
+                            price={obj.price}
+                            image={obj.image}
+                            removeNFT={removeNFT}/>
+                            })
+                        }
+                </div>
+            ):(
+                <div className='d-flex align-items-center justify-content-center' style={{'height':'50vh'}}>
+                    <h4>You have no listed items</h4>
+                </div>
+            )
+            }
+            <h2>Sold NFTs</h2>
+            {soldItems.length?(
+                <div className='d-flex row justify-content-center overflow-auto' style={{'height':'50vh'}}>
+                    {soldItems.map((obj,i)=>{
+                        return <SoldCard
+                        key={i}
+                        image={obj.image}
                         name={obj.name}
-                        creator={obj.creator}
                         description={obj.description}
                         price={obj.price}
-                        image={obj.image}
-                        removeNFT={removeNFT}/>
-                        })
-                    }
-            </div>
-            <h2>Sold NFTs</h2>
-            <div className='row justify-content-center overflow-auto' style={{'height':'50vh'}}>
-                {soldItems.map((obj,i)=>{
-                    return <SoldCard
-                    key={i}
-                    image={obj.image}
-                    name={obj.name}
-                    description={obj.description}
-                    price={obj.price}
-                    />
-                })}
-            </div>
+                        />
+                    })}
+                </div>
+            ):(
+                <div className='d-flex align-items-center justify-content-center' style={{'height':'50vh'}}>
+                    <h4>You have no sold items</h4>
+                </div>
+            )
+            }
         </div>
     )
 }

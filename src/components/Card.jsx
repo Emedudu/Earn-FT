@@ -1,7 +1,15 @@
 import React from "react";
 import Web3 from "web3";
 
-const Card=({marketId,name,creator,description,price,image,isOwner,contracts,account,buyNFT,removeNFT})=>{
+const Card=({marketId,
+            name,
+            creator,
+            description,
+            price,
+            image,
+            isOwner,
+            buyNFT,
+            removeNFT})=>{
     let web3=new Web3()
     return(
         <div className="p-3 col-10 col-sm-6 col-lg-4">
