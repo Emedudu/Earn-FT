@@ -18,11 +18,14 @@ const App=()=> {
   const [accounts,setAccounts]=useState('')
   const [loading,setLoading]=useState(false)
   const [message,setMessage]=useState('')
-  const [allItems,setAllItems]=useState([])
   const [purchases,setPurchases]=useState([])
+  const [allItems,setAllItems]=useState([])
   const [listedItems,setListedItems]=useState([])
   const [soldItems,setSoldItems]=useState([])
   const [marketChanged,setMarketChanged]=useState(false)
+  const [homeInitialRender,setHomeInitialRender]=useState(true)
+  const [listedInitialRender,setListedInitialRender]=useState(true)
+  const [boughtInitialRender,setBoughtInitialRender]=useState(true)
 
   const loadBlockChainData=async()=>{
     setLoading(true)
@@ -87,8 +90,10 @@ const App=()=> {
                                           Token={token} 
                                           setMessage={setMessage} 
                                           setLoading={setLoading} 
-                                          allItems={allItems} 
-                                          setAllItems={setAllItems} 
+                                          homeInitialRender={homeInitialRender}
+                                          setHomeInitialRender={setHomeInitialRender}
+                                          allItems={allItems}
+                                          setAllItems={setAllItems}
                                           marketChanged={marketChanged} 
                                           setMarketChanged={setMarketChanged}/>}/>
           <Route exact path="/uploadNFT" element={<UploadNFT 
@@ -102,15 +107,19 @@ const App=()=> {
                                           contracts={contracts} 
                                           account={accounts[1]} 
                                           Token={token}
-                                          marketChanged={marketChanged}
                                           purchases={purchases}
-                                          setPurchases={setPurchases} 
+                                          setPurchases={setPurchases}
+                                          marketChanged={marketChanged}                                         
+                                          boughtInitialRender={boughtInitialRender}
+                                          setBoughtInitialRender={setBoughtInitialRender} 
                                           setLoading={setLoading}/>}/>
           <Route exact path="/myListedNFT" element={<MyListedNFTs 
                                           contracts={contracts} 
                                           account={accounts[1]} 
                                           Token={token}  
                                           setLoading={setLoading} 
+                                          listedInitialRender={listedInitialRender}
+                                          setListedInitialRender={setListedInitialRender}
                                           listedItems={listedItems}
                                           setListedItems={setListedItems}
                                           soldItems={soldItems}
@@ -120,7 +129,7 @@ const App=()=> {
         </Routes>
         
       </div>
-    </div>    
+    </div>  
   );
   
 }

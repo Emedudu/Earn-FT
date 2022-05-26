@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Card from './Card';
 import ListedCard from './ListedCard';
 import SoldCard from './SoldCard';
 
 const MyListedNFTs=({contracts,
-            Token,
-            account,
-            setLoading,
-            listedItems,
-            setListedItems,
-            soldItems,
-            setSoldItems,
-            marketChanged,
-            setMarketChanged
+                    Token,
+                    account,
+                    setLoading,
+                    listedInitialRender,
+                    setListedInitialRender,
+                    listedItems,
+                    setListedItems,
+                    soldItems,
+                    setSoldItems,
+                    marketChanged,
+                    setMarketChanged
         })=>{
-        
+    
     const getAllListedItems=async()=>{
         setLoading(true)
         let res=contracts && await contracts.methods.itemsCount().call()
@@ -51,20 +53,27 @@ const MyListedNFTs=({contracts,
                 }
             }
         }
-        setListedItems(fetchedListedItems)
-        setSoldItems(fetchedSoldItems)
         setLoading(false)
+        setListedItems(fetchedListedItems)
+        setSoldItems(fetchedSoldItems)     
     }
     const removeNFT=async(marketId)=>{
         await (await contracts&&contracts.methods.removeNFT(marketId).send({from:account,gas:5000000}))
         getAllListedItems()
     }
+    useEffect(()=>{
+        if (contracts!==''){
+            if(listedInitialRender) {
+                contracts&&getAllListedItems() // initially called every time, the component renders
+                setListedInitialRender(false)
+            } 
+        }
+    },[contracts])
     marketChanged&&getAllListedItems().then(()=>setMarketChanged(false))
-    contracts&&window.localStorage.getItem('hasListedNFTs')&&getAllListedItems()
     return(
         <div>
             <h2>Listed NFTs</h2>
-            <div className='row justify-content-center'>
+            <div className='row justify-content-center overflow-auto' style={{'height':'50vh'}}>
                 {listedItems.map((obj,i)=>{
                         return <ListedCard
                         key={i} 
@@ -79,7 +88,7 @@ const MyListedNFTs=({contracts,
                     }
             </div>
             <h2>Sold NFTs</h2>
-            <div>
+            <div className='row justify-content-center overflow-auto' style={{'height':'50vh'}}>
                 {soldItems.map((obj,i)=>{
                     return <SoldCard
                     key={i}

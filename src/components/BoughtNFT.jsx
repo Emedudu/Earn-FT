@@ -1,7 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import BoughtCard from './BoughtCard';
 
-const BoughtNFT=({contracts,account,Token,marketChanged,purchases,setPurchases,setLoading})=>{
+const BoughtNFT=({contracts,
+                account,
+                Token,
+                purchases,
+                setPurchases,
+                marketChanged,
+                boughtInitialRender,
+                setBoughtInitialRender,
+                setLoading})=>{
+    
     const getBoughtNFTs=()=>{
         setLoading(true)
         contracts&&contracts.getPastEvents('Bought',{
@@ -28,8 +37,15 @@ const BoughtNFT=({contracts,account,Token,marketChanged,purchases,setPurchases,s
             setPurchases(boughtItems)
         })
     }
+    useEffect(()=>{
+        if(contracts!==''){
+            if (boughtInitialRender) {
+                getBoughtNFTs() // initially called every time, the component renders
+                setBoughtInitialRender(false);
+            } 
+        }
+    },[contracts])
     contracts&&marketChanged&&getBoughtNFTs()
-    contracts&&window.localStorage.getItem('hasPurchasedNFTs')&&getBoughtNFTs()
     return(
         <div>
             <div className='row justify-content-center'>

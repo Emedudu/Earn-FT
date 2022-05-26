@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 const Navigation=({walletConnect,account})=>{
     const [expanded, setExpanded] = useState(false);
     return(
-        <Navbar expanded={expanded} collapseOnSelect expand="lg" bg="light" variant="light" className='position-sticky'>
+        <Navbar expanded={expanded} collapseOnSelect expand="lg" bg="light" variant="light" sticky='top'>
           <Container>
             <Navbar.Brand href="#home">NFT-MARKETPLACE</Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" onClick={() => setExpanded(expanded ? false : "expanded")} />

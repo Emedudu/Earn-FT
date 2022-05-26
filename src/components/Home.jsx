@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Card from './Card';
 
 const Home=({contracts,
@@ -6,12 +6,14 @@ const Home=({contracts,
             account,
             setMessage,
             setLoading,
+            homeInitialRender,
+            setHomeInitialRender,
             allItems,
             setAllItems,
             marketChanged,
             setMarketChanged
-        })=>{
-        
+        })=>{          
+    
     const getAllItems=async()=>{
         setLoading(true)
         let res=contracts && await contracts.methods.itemsCount().call()
@@ -48,13 +50,20 @@ const Home=({contracts,
         await (await contracts&&contracts.methods.removeNFT(marketId).send({from:account,gas:5000000}))
         getAllItems()
     }
-    marketChanged&&getAllItems().then(()=>setMarketChanged(false))
     contracts&&contracts.events.Bought({filter:{adress:account}})
-        .on('data',event=>{
-            setMessage(`You just bought ${event.returnValues}`)
-            getAllItems()
-        })
-    contracts&&!allItems[0]&&getAllItems()
+    .on('data',event=>{
+        setMessage(`You just bought ${event.returnValues}`)
+        getAllItems()
+    })
+    useEffect(()=>{
+        if(contracts!==''){
+            if (homeInitialRender) {
+                getAllItems() // initially called every time, the component renders
+                setHomeInitialRender(false);
+            } 
+        }
+    },[contracts])
+    marketChanged&&getAllItems().then(()=>setMarketChanged(false))
     return(
         <div>
             <div className='row justify-content-center'>
