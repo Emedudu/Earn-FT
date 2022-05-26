@@ -21,6 +21,7 @@ const UploadNFT=({contracts,account,Token,setMessage,setLoading,setMarketChanged
             }
 
         }
+        window.localStorage.setItem('hasListedNFTs',true)
         setLoading(false)
         setMarketChanged(true)
         // let itmId=Token&&Token.mint(uri)

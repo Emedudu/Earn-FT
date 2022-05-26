@@ -14,6 +14,7 @@ const Navigation=({walletConnect,account})=>{
                 <Nav.Link as={Link} to='/' onClick={() => setExpanded(false)}>HOME</Nav.Link>
                 <Nav.Link as={Link} to='/uploadNFT' onClick={() => setExpanded(false)}>UPLOAD NFT</Nav.Link>
                 <Nav.Link as={Link} to='/boughtNFT' onClick={() => setExpanded(false)}>BOUGHT NFTs</Nav.Link>
+                <Nav.Link as={Link} to='/myListedNFT' onClick={() => setExpanded(false)}>MY LISTED NFTs</Nav.Link>
               </Nav>
               <Nav>
                 {account?(

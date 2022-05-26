@@ -41,6 +41,7 @@ const Home=({contracts,
     }
     const buyNFT=async(marketId,price)=>{
         await (await contracts&&contracts.methods.buyNFT(marketId).send({from:account,value:price,gas:5000000}))
+        window.localStorage.setItem('hasPurchasedNFTs',true)
         getAllItems()
     }
     const removeNFT=async(marketId)=>{

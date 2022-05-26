@@ -7,6 +7,7 @@ import NFTToken from '../abis/NFTToken'
 import './App.css';
 import BoughtNFT from './BoughtNFT';
 import Home from './Home';
+import MyListedNFTs from './MyListedNFTs';
 import Navigation from './Navbar';
 import UploadNFT from './UploadNFT';
 // import {createAlchemyWeb3} from "@alch/alchemy-web3";
@@ -19,6 +20,8 @@ const App=()=> {
   const [message,setMessage]=useState('')
   const [allItems,setAllItems]=useState([])
   const [purchases,setPurchases]=useState([])
+  const [listedItems,setListedItems]=useState([])
+  const [soldItems,setSoldItems]=useState([])
   const [marketChanged,setMarketChanged]=useState(false)
 
   const loadBlockChainData=async()=>{
@@ -63,7 +66,7 @@ const App=()=> {
     }
   },[])
   return (
-    <div className='container-fluid m-0 p-0 full-width d-flex flex-column'>
+    <div className={`container-fluid m-0 p-0 full-width d-flex flex-column ${loading&&'overflow-hidden'}`}>
       <Navigation walletConnect={loadBlockChainData} account={accounts[0]}/>
       <div className='container-fluid'>
         <div className={`container d-flex position-fixed justify-content-between p-3 mb-2 bg-info text-white ${message!==''?'visible':'invisible'}`} style={{'zIndex':'999','width':'100%'}}>
@@ -103,6 +106,17 @@ const App=()=> {
                                           purchases={purchases}
                                           setPurchases={setPurchases} 
                                           setLoading={setLoading}/>}/>
+          <Route exact path="/myListedNFT" element={<MyListedNFTs 
+                                          contracts={contracts} 
+                                          account={accounts[1]} 
+                                          Token={token}  
+                                          setLoading={setLoading} 
+                                          listedItems={listedItems}
+                                          setListedItems={setListedItems}
+                                          soldItems={soldItems}
+                                          setSoldItems={setSoldItems}
+                                          marketChanged={marketChanged} 
+                                          setMarketChanged={setMarketChanged}/>}/>
         </Routes>
         
       </div>

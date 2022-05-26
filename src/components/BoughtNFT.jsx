@@ -29,7 +29,7 @@ const BoughtNFT=({contracts,account,Token,marketChanged,purchases,setPurchases,s
         })
     }
     contracts&&marketChanged&&getBoughtNFTs()
-    contracts&&!purchases[0]&&getBoughtNFTs()
+    contracts&&window.localStorage.getItem('hasPurchasedNFTs')&&getBoughtNFTs()
     return(
         <div>
             <div className='row justify-content-center'>
