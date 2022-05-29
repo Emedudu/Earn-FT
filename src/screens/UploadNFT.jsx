@@ -27,7 +27,6 @@ const UploadNFT=({contracts,
             }
 
         }
-        window.localStorage.setItem('hasListedNFTs',true)
         setLoading(false)
         setMarketChanged(true)
     }
@@ -35,8 +34,8 @@ const UploadNFT=({contracts,
         let uri=`https://ipfs.infura.io/ipfs/${res.path}`
         Token&&Token.methods.mint(uri).send({from:account, gas:5000000})
         let tokenId=await await(Token&&Token.methods.tokenId().call())       
-        Token&&Token.methods.setApprovalForAll(contracts.address,true).send({from:account, gas:5000000}).then(()=>console.log('done'))
-        contracts&&contracts.methods.uploadNFT(Token.address,parseInt(tokenId.toString())+1,web3.utils.toWei(price)).send({from:account, gas:5000000})      
+        Token&&Token.methods.setApprovalForAll(contracts._address,true).send({from:account, gas:5000000}).then(()=>console.log('done'))
+        contracts&&contracts.methods.uploadNFT(Token._address,parseInt(tokenId.toString())+1,web3.utils.toWei(price)).send({from:account, gas:5000000})      
     }
     const uploadToIPFS=async(e)=>{
         e.preventDefault();
@@ -52,7 +51,9 @@ const UploadNFT=({contracts,
         }
         setLoading(false)
     }
-    contracts&&contracts.events.Uploaded({filter:{adress:account}})
+    contracts&&contracts.events.Uploaded({
+        filter:{adress:account}
+    })
         .on('data',event=>{console.log(event.returnValues);setMessage(`You just uploaded ${nam} for a price of ${web3.utils.fromWei(event.returnValues.price.toString())} ETH`)})
     return( 
         <div style={{'height':'100vh'}}>
@@ -62,7 +63,7 @@ const UploadNFT=({contracts,
                 type='file'
                 placeholder='Choose Image'
                 className="form-control"
-                accept="image/png, image/jpeg"
+                accept="audio/*,video/*,image/*"
                 />
                 <input
                 onChange={(e)=>setName(e.target.value)}

@@ -24,7 +24,6 @@ const Home=({contracts,
                 let uri=Token && await Token.methods.tokenURI(item.id).call();
                 let response=await fetch(uri)
                 let metadata=await response.json()
-                console.log(price)
                 itemsFetched.push({
                     marketId:i,
                     creator:item.creator,
@@ -47,16 +46,20 @@ const Home=({contracts,
         setLoading(true)
         await (await contracts&&contracts.methods.removeNFT(marketId).send({from:account,gas:5000000}))
     }
-    contracts&&contracts.events.Bought({filter:{adress:account}})
+    contracts&&contracts.events.Bought({
+        filter:{adress:account}
+    })
     .on('data',event=>{
         setLoading(false)
-        setMessage(`You just bought ${event.returnValues.itemId}`)
+        setMessage(`You just bought ${event.returnValues.itemId} for a price of ${event.returnValues.price}`)
         getAllItems()
     })
-    contracts&&contracts.events.Removed({filter:{adress:account}})
+    contracts&&contracts.events.Removed({
+        filter:{adress:account}
+    })
     .on('data',event=>{
         setLoading(false)
-        setMessage(`You just removed ${event.returnValues.itemId}`)
+        setMessage(`You just removed an NFT with id ${event.returnValues.itemId}`)
         getAllItems()
     })
     useEffect(()=>{

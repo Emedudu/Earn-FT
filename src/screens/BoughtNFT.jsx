@@ -14,7 +14,7 @@ const BoughtNFT=({contracts,
         setLoading(true)
         contracts&&contracts.getPastEvents('Bought',{
             filter:{adress:account},
-            fromBlock:0,
+            fromBlock:10758069,
             toBlock:'latest'
         })
         .then(async(events)=>{

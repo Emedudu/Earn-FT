@@ -9,7 +9,7 @@ import Home from '../screens/Home';
 import MyListedNFTs from '../screens/MyListedNFTs';
 import Navigation from './Navbar';
 import UploadNFT from '../screens/UploadNFT';
-// import {createAlchemyWeb3} from "@alch/alchemy-web3";
+import {createAlchemyWeb3} from "@alch/alchemy-web3";
 
 const App=()=> {
   const [contracts,setContracts]=useState('')
@@ -29,10 +29,10 @@ const App=()=> {
   const loadBlockChainData=async()=>{
     setLoading(true)
     if(typeof window.ethereum!=='undefined'){
-      const web3 = await new Web3(new Web3.providers.WebsocketProvider('ws://localhost:7545'))
-      // const url = `wss://rinkeby.infura.io/ws/v3/5a5069b4ad6f4c38afe55f29fe40b91e`;
+      // const web3 = await new Web3(new Web3.providers.WebsocketProvider('ws://localhost:7545'))
+      const url = `wss://eth-rinkeby.alchemyapi.io/v2/Mf4wYG7-6h-tjTrtHuvf-OiecMxN11vF`;
       // Using WebSockets
-      // const web3 = createAlchemyWeb3(url);
+      const web3 = createAlchemyWeb3(url);
       // Using web3js
       // const web3 = new Web3(new Web3.providers.WebsocketProvider(url));
       await window.ethereum.enable();
@@ -73,7 +73,7 @@ const App=()=> {
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div className={`d-flex full-height full-width justify-content-center align-items-center position-absolute ${loading?'visible':'invisible'}`} style={{'backgroundColor':'rgba(255,255,255,0.5)','zIndex':'999'}}>
+        <div className={`d-flex full-width justify-content-center position-fixed align-items-center ${loading?'visible':'invisible'}`} style={{'backgroundColor':'rgba(255,255,255,0.5)','zIndex':'999','height':'100vh'}}>
           <div className="spinner-border text-primary" role="status">
             <span className="sr-only">Loading...</span>
           </div>
@@ -81,7 +81,7 @@ const App=()=> {
         <Routes>
           <Route exact path="/" element={<Home 
                                           contracts={contracts} 
-                                          account={accounts[1]} 
+                                          account={accounts[0]} 
                                           Token={token} 
                                           setMessage={setMessage} 
                                           setLoading={setLoading} 
@@ -93,14 +93,14 @@ const App=()=> {
                                           setMarketChanged={setMarketChanged}/>}/>
           <Route exact path="/uploadNFT" element={<UploadNFT 
                                           contracts={contracts} 
-                                          account={accounts[1]} 
+                                          account={accounts[0]} 
                                           Token={token}
                                           setMessage={setMessage} 
                                           setLoading={setLoading} 
                                           setMarketChanged={setMarketChanged}/>}/>
           <Route exact path="/boughtNFT" element={<BoughtNFT 
                                           contracts={contracts} 
-                                          account={accounts[1]} 
+                                          account={accounts[0]} 
                                           Token={token}
                                           purchases={purchases}
                                           setPurchases={setPurchases}
@@ -110,7 +110,7 @@ const App=()=> {
                                           setLoading={setLoading}/>}/>
           <Route exact path="/myListedNFT" element={<MyListedNFTs 
                                           contracts={contracts} 
-                                          account={accounts[1]} 
+                                          account={accounts[0]} 
                                           Token={token}  
                                           setLoading={setLoading} 
                                           listedInitialRender={listedInitialRender}
